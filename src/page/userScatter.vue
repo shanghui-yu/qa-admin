@@ -16,7 +16,7 @@
     <div class="layout">
         <Layout>
             <Header>
-                <Menu mode="horizontal" theme="dark" active-name="1" @on-select="onSelect">
+                <Menu mode="horizontal" theme="dark" active-name="2" @on-select="onSelect">
                     <div class="layout-nav">
                         <MenuItem name="1"><Icon type="ios-navigate"></Icon>用户信息</MenuItem>
                         <MenuItem name="2"><Icon type="ios-navigate"></Icon>用户分布</MenuItem>
@@ -28,9 +28,6 @@
                     <div class="content" ref="table">
                       <Table class="ivu-table-auto" border :height="wh" :columns="columns" :data="allData"></Table>
                     </div>
-                    <div style="margin-top:20px;">
-                      <Page :total='total' :page-size="20" show-total @on-change="pageChange"></Page>
-                    </div>
                 </Card>
             </Content>
         </Layout>
@@ -38,58 +35,35 @@
 </template>
 <script>
 import XHR from '../api'
-import provinces from '../../static/provinces'
 export default {
   data () {
     return {
       columns: [
         {
-          title: '用户名',
-          key: 'nickname'
-        },
-        {
-          title: '省份',
+          title: '地区',
           key: 'province'
         },
         {
-          title: '城市',
-          key: 'city'
-        },
-        {
-          title: '用户openid',
-          key: 'uid'
-        },
-        {
-          title: '手机号',
-          key: 'phone'
-        },
-        {
-          title: '性别',
-          key: 'sex'
+          title: '人数',
+          key: 'total'
         }
       ], // table数据内容
       allData: [],
-      page: 0,
       wh: 400,
-      total: 0
+      total:0
     }
   },
   created () {
-    this.getUserList()
+    this.getUserTotalByProvince()
+    this.total = localStorage.getItem('total')
   },
   mounted () {
     this.wh = this.$refs.table.offsetHeight
   },
   methods: {
-    getUserList () {
-      let json = {
-        page: this.page,
-        size: 20
-      }
-      XHR.getUserList(json).then(res => {
-        let {status, data, total} = res.data
-        this.total = total
-        localStorage.setItem('total',total)
+    getUserTotalByProvince () {
+      XHR.getUserTotalByProvince().then(res => {
+        let {status, data} = res.data
         if (!status) {
           let datas = this.packing(data)
           this.allData = datas
@@ -97,15 +71,17 @@ export default {
       })
     },
     packing(datas){
+      let totalNum = 0
       if(datas && datas.length){
         datas.forEach(element => {
-          for (const key in provinces) {
-            if(key == element.province){
-              element.province = provinces[key]
-            }
-          }
+          totalNum = parseInt(element.total)+totalNum
         })
       }
+      let json = {
+        province:'其他',
+        total:parseInt(this.total) - totalNum
+      }
+      datas.push(json)
       return datas
     },
     pageChange (e) {

@@ -8,10 +8,18 @@ const HTTPS = 'http://www.vr0101.com' // 正式地址
 const URLS = DEBUG ? HTTP_DEV : HTTPS
 // const URLS = '/bx'
 class XHR {
-  // 获取题目
+  // 获取用户信息
   getUserList (json) {
     return fetch({
       url: `${URLS}/getUserList`,
+      body: json,
+      type: 'GET'
+    })
+  }
+  // 用户分布
+  getUserTotalByProvince (json) {
+    return fetch({
+      url: `${URLS}/getUserTotalByProvince`,
       body: json,
       type: 'GET'
     })

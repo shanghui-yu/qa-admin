@@ -5,7 +5,7 @@ import Router from 'vue-router'
 import Login from '@/page/Login'
 import Redirect from '@/page/Redirect'
 import Home from '@/page/Home'
-
+import UserScatter from '@/page/userScatter'
 Vue.use(Router)
 export default new Router({
   routes: [
@@ -18,6 +18,11 @@ export default new Router({
       path: '/home',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/UserScatter',
+      name: 'UserScatter',
+      component: UserScatter
     },
     {
       path: '*',
