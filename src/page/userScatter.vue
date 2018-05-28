@@ -77,11 +77,18 @@ export default {
           totalNum = parseInt(element.total)+totalNum
         })
       }
-      let json = {
-        province:'其他',
-        total:parseInt(this.total) - totalNum
-      }
-      datas.push(json)
+      let addDatas = [
+        {
+          province:'其他',
+          total:parseInt(this.total) - totalNum
+        },
+        {
+          province:'总人数',
+          total:this.total
+        }
+      ]
+      datas = [...datas,...addDatas]
+      // datas.push(json)
       return datas
     },
     pageChange (e) {
