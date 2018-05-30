@@ -16,12 +16,7 @@
     <div class="layout">
         <Layout>
             <Header>
-                <Menu mode="horizontal" theme="dark" active-name="1" @on-select="onSelect">
-                    <div class="layout-nav">
-                        <MenuItem name="1"><Icon type="ios-navigate"></Icon>用户信息</MenuItem>
-                        <MenuItem name="2"><Icon type="ios-navigate"></Icon>用户分布</MenuItem>
-                    </div>
-                </Menu>
+                <HeaderTop selectNum='1'></HeaderTop>
             </Header>
             <Content :style="{padding: '0 50px'}">
                 <Card>
@@ -39,6 +34,7 @@
 <script>
 import XHR from '../api'
 import provinces from '../../static/provinces'
+import HeaderTop from '../components/header-top'
 export default {
   data () {
     return {
@@ -73,6 +69,9 @@ export default {
       wh: 400,
       total: 0
     }
+  },
+  components: {
+    HeaderTop
   },
   created () {
     this.getUserList()
@@ -111,16 +110,6 @@ export default {
     pageChange (e) {
       this.page = e - 1
       this.getUserList()
-    },
-    onSelect(name){
-      switch (name) {
-        case '1':
-          this.$router.replace('/Home/')
-          break;
-        case '2':
-          this.$router.replace('/UserScatter/')
-          break;
-      }
     }
   }
 }

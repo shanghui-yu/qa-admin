@@ -20,9 +20,7 @@ export default {
   overflow: hidden;
   background: #fff;
 }
-/* 防止table在flex下无限增加宽度 */
-.ivu-table-auto table{
-  /* table-layout: auto;
-  width: 100% !important; */
-}
+/* .ivu-layout-header,.ivu-layout-content{
+  padding: 0 300px !important;
+} */
 </style>
