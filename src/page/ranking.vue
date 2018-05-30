@@ -28,8 +28,8 @@
               <!-- 日榜 -->
               <div v-if="tabValue=='name1'">
                 <div style="margin-bottom:15px;">
-                  <DatePicker :value="value1" format="yyyy年MM月dd日" type="date" placeholder="请选择日期" style="width: 200px"></DatePicker>
-                  <Button type="primary" icon="ios-search">搜索</Button>
+                  <DatePicker :value="time" @on-change="showtime" type="date" placeholder="请选择日期" style="width: 200px"></DatePicker>
+                  <Button type="primary" icon="ios-search" @click="searchDate">搜索</Button>
                  </div>
                 <Card>
                     <div class="content" ref="table">
@@ -37,16 +37,16 @@
                     </div>
                 </Card>
               </div>
-              
+
               <!-- 期榜 -->
               <div v-if="tabValue=='name2'">
                 <div style="margin-bottom:15px;">
-                  <Input v-model="value" placeholder="请输入第几期，如1，代表第一期" style="width: 200px"></Input>
-                  <Button type="primary" icon="ios-search">搜索</Button>
+                  <Input v-model="batch" placeholder="请输入第几期，如1，代表第一期" style="width: 200px"></Input>
+                  <Button type="primary" icon="ios-search" @click="searchBatch">搜索</Button>
                 </div>
                 <Card>
                     <div class="content" ref="table">
-                      <Table class="ivu-table-auto" border :height="wh" :columns="columns" :data="allData"></Table>
+                      <Table class="ivu-table-auto" border :height="wh" :columns="columns" :data="batchData"></Table>
                     </div>
                 </Card>
               </div>
@@ -56,18 +56,18 @@
 </template>
 <script>
 import XHR from '../api'
-import HeaderTop from "../components/header-top";
+import HeaderTop from '../components/header-top'
 export default {
   data () {
     return {
       columns: [
         {
           title: '昵称',
-          key: 'name'
+          key: 'nickname'
         },
         {
           title: '得分',
-          key: 'total'
+          key: 'score'
         },
         {
           title: '手机号',
@@ -79,28 +79,64 @@ export default {
         }
       ], // table数据内容
       allData: [],
+      batchData: [],
       wh: 400,
-      value1:'',
-      tabValue:'name1'
+      value1: '',
+      tabValue: 'name1',
+      time: '',
+      batch: ''
     }
   },
-  components:{
+  components: {
     HeaderTop
   },
   created () {
-    this.getUserTotalByProvince()
   },
   mounted () {
     this.wh = this.$refs.table.offsetHeight
   },
   methods: {
-    getUserTotalByProvince () {
-      XHR.getUserTotalByProvince().then(res => {
+    showtime (e) {
+      this.time = e
+    },
+    searchDate () {
+      let json = {
+        size: 50,
+        page: 1,
+        date: this.time
+      }
+      XHR.getDayRank(json).then(res => {
+        let {status, data} = res.data
+        if (!status) {
+          this.allData = data
+        }
       })
     },
-    packing(datas){
+    searchBatch (datas) {
+      let json = {
+        project: 'king_of_answer',
+        page: 1,
+        batch: 1,
+        size: 50,
+        batchNum: this.batch
+      }
+      XHR.getTop(json).then(res => {
+        console.log(res)
+        let {status, data} = res.data
+        if (!status) {
+          this.batchData = this.picting(data)
+        }
+      })
     },
-    tabs(name){
+    picting (data) {
+      if (data && data.length) {
+        data.forEach(element => {
+          element.score = element.total
+        })
+      }
+      return data
+    },
+    tabs (name) {
       this.tabValue = name
     }
   }
