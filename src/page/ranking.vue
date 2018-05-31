@@ -117,7 +117,7 @@ export default {
         project: 'king_of_answer',
         page: 1,
         batch: 1,
-        size: 50,
+        size: 100,
         batchNum: this.batch
       }
       XHR.getTop(json).then(res => {
