@@ -102,20 +102,20 @@ export default {
     searchDate () {
       let json = {
         size: 50,
-        page: 1,
+        page: 0,
         date: this.time
       }
       XHR.getDayRank(json).then(res => {
         let {status, data} = res.data
         if (!status) {
-          this.allData = data
+          this.allData = this.picting(data)
         }
       })
     },
     searchBatch (datas) {
       let json = {
         project: 'king_of_answer',
-        page: 1,
+        page: 0,
         batch: 1,
         size: 100,
         batchNum: this.batch
@@ -130,8 +130,11 @@ export default {
     },
     picting (data) {
       if (data && data.length) {
-        data.forEach(element => {
-          element.score = element.total
+        data.forEach((element,index) => {
+          element.score = element.score? element.score :element.total
+          if(!element.phone){
+            data.splice(index,1)
+          }
         })
       }
       return data
