@@ -46,7 +46,7 @@
                 </div>
                 <Card>
                     <div class="content" ref="table">
-                      <Table class="ivu-table-auto" border :height="wh" :columns="columns" :data="batchData"></Table>
+                      <Table class="ivu-table-auto" border :height="wh" :columns="batchColumns" :data="batchData"></Table>
                     </div>
                 </Card>
               </div>
@@ -62,12 +62,38 @@ export default {
     return {
       columns: [
         {
+          title: '索引',
+          type: 'index'
+        },
+        {
           title: '昵称',
           key: 'nickname'
         },
         {
           title: '得分',
           key: 'score'
+        },
+        {
+          title: '手机号',
+          key: 'phone'
+        },
+        {
+          title: '省份',
+          key: 'province'
+        }
+      ], // table数据内容
+      batchColumns: [
+        {
+          title: '索引',
+          type: 'index'
+        },
+        {
+          title: '昵称',
+          key: 'nickname'
+        },
+        {
+          title: '得分',
+          key: 'total'
         },
         {
           title: '手机号',
@@ -103,7 +129,8 @@ export default {
       let json = {
         size: 50,
         page: 0,
-        date: this.time
+        date: this.time,
+        time:+new Date()
       }
       XHR.getDayRank(json).then(res => {
         let {status, data} = res.data
@@ -118,10 +145,10 @@ export default {
         page: 0,
         batch: 1,
         size: 100,
-        batchNum: this.batch
+        batchNum: this.batch,
+        time:+new Date()
       }
       XHR.getTop(json).then(res => {
-        console.log(res)
         let {status, data} = res.data
         if (!status) {
           this.batchData = this.picting(data)
@@ -130,12 +157,14 @@ export default {
     },
     picting (data) {
       if (data && data.length) {
-        data.forEach((element,index) => {
-          element.score = element.score? element.score :element.total
-          if(!element.phone){
-            data.splice(index,1)
-          }
+        data = data.filter(item=>{
+          return item.phone
         })
+        // data.forEach((element,index) => {
+        //   if(!element.phone){
+        //     data.splice(index,1)
+        //   }
+        // })
       }
       return data
     },
