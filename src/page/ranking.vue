@@ -9,7 +9,15 @@
   margin:20px auto;
 }
 .ivu-card-body .content{
-  height: calc(100vh - 250px);
+  height: calc(100vh - 270px);
+}
+.totals{
+  float: right;
+}
+.totals .number{
+  color: #333;
+  font-size: 22px;
+  font-style: normal;
 }
 </style>
 <template>
@@ -29,11 +37,12 @@
               <div v-if="tabValue=='name1'">
                 <div style="margin-bottom:15px;">
                   <DatePicker :value="time" @on-change="showtime" type="date" placeholder="请选择日期" style="width: 200px"></DatePicker>
-                  <Button type="primary" icon="ios-search" @click="searchDate">搜索</Button>
+                  <Button type="primary" icon="ios-search" @click="searchDate(0)">搜索</Button>
+                  <span class="totals">参与总人数：<em class="number">{{totals}}</em></span>
                  </div>
                 <Card>
-                    <div class="content" ref="table">
-                      <Table class="ivu-table-auto" border :height="wh" :columns="columns" :data="allData"></Table>
+                    <div class="content" ref="table" @scroll="loadMore">
+                      <Table :loading="loading" class="ivu-table-auto" border :height="wh" :columns="columns" :data="allData" @scroll="loadMore"></Table>
                     </div>
                 </Card>
               </div>
@@ -110,7 +119,11 @@ export default {
       value1: '',
       tabValue: 'name1',
       time: '',
-      batch: ''
+      batch: '',
+      page:0,
+      loading:false,
+      loamore:false,
+      totals:0
     }
   },
   components: {
@@ -125,17 +138,49 @@ export default {
     showtime (e) {
       this.time = e
     },
-    searchDate () {
+    searchDate (pages) {
+      if(!pages){
+        this.page = 0
+      }
       let json = {
         size: 50,
-        page: 0,
+        page: this.page,
         date: this.time,
         time:+new Date()
       }
       XHR.getDayRank(json).then(res => {
-        let {status, data} = res.data
+        let {status, data,total} = res.data
         if (!status) {
-          this.allData = this.picting(data)
+          if(!pages){
+            this.loamore = false
+            this.allData = this.picting(data)
+            setTimeout(() => {
+              let tables = document.querySelector('.ivu-table-overflowY')
+              tables.scrollTop = 0
+            }, 100);
+          }else{
+            if(data.length){
+              this.loamore = false
+              this.allData = [...this.allData,...this.picting(data)]
+            }else{
+              this.loamore=true
+            }
+          }
+          this.loading = false
+          this.totals = total
+          this.$nextTick(() => {
+            setTimeout(() => {
+              let tables = document.querySelector('.ivu-table-overflowY')
+              tables.addEventListener('scroll',e=>{
+                if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight && !this.loamore) {
+                  this.loading = true
+                  this.loamore = true
+                  this.page++
+                  this.searchDate(1)
+                }
+              })
+            }, 200);
+          })
         }
       })
     },
@@ -157,9 +202,7 @@ export default {
     },
     picting (data) {
       if (data && data.length) {
-        data = data.filter(item=>{
-          return item.phone
-        })
+        data = data.filter(item=>item.phone)
         // data.forEach((element,index) => {
         //   if(!element.phone){
         //     data.splice(index,1)
@@ -167,6 +210,10 @@ export default {
         // })
       }
       return data
+    },
+    loadMore(e){
+      console.log(e);
+      
     },
     tabs (name) {
       this.tabValue = name
