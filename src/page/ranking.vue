@@ -120,10 +120,10 @@ export default {
       tabValue: 'name1',
       time: '',
       batch: '',
-      page:0,
-      loading:false,
-      loamore:false,
-      totals:0
+      page: 0,
+      loading: false,
+      loamore: false,
+      totals: 0
     }
   },
   components: {
@@ -139,31 +139,31 @@ export default {
       this.time = e
     },
     searchDate (pages) {
-      if(!pages){
+      if (!pages) {
         this.page = 0
       }
       let json = {
         size: 50,
         page: this.page,
         date: this.time,
-        time:+new Date()
+        time: +new Date()
       }
       XHR.getDayRank(json).then(res => {
-        let {status, data,total} = res.data
+        let {status, data, total} = res.data
         if (!status) {
-          if(!pages){
+          if (!pages) {
             this.loamore = false
             this.allData = this.picting(data)
             setTimeout(() => {
               let tables = document.querySelector('.ivu-table-overflowY')
               tables.scrollTop = 0
-            }, 100);
-          }else{
-            if(data.length){
+            }, 100)
+          } else {
+            if (data.length) {
               this.loamore = false
-              this.allData = [...this.allData,...this.picting(data)]
-            }else{
-              this.loamore=true
+              this.allData = [...this.allData, ...this.picting(data)]
+            } else {
+              this.loamore = true
             }
           }
           this.loading = false
@@ -171,7 +171,7 @@ export default {
           this.$nextTick(() => {
             setTimeout(() => {
               let tables = document.querySelector('.ivu-table-overflowY')
-              tables.addEventListener('scroll',e=>{
+              tables.addEventListener('scroll', e => {
                 if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight && !this.loamore) {
                   this.loading = true
                   this.loamore = true
@@ -179,7 +179,7 @@ export default {
                   this.searchDate(1)
                 }
               })
-            }, 200);
+            }, 200)
           })
         }
       })
@@ -191,7 +191,7 @@ export default {
         batch: 1,
         size: 100,
         batchNum: this.batch,
-        time:+new Date()
+        time: +new Date()
       }
       XHR.getTop(json).then(res => {
         let {status, data} = res.data
@@ -202,7 +202,7 @@ export default {
     },
     picting (data) {
       if (data && data.length) {
-        data = data.filter(item=>item.phone)
+        data = data.filter(item => item.phone)
         // data.forEach((element,index) => {
         //   if(!element.phone){
         //     data.splice(index,1)
@@ -211,9 +211,8 @@ export default {
       }
       return data
     },
-    loadMore(e){
-      console.log(e);
-      
+    loadMore (e) {
+      console.log(e)
     },
     tabs (name) {
       this.tabValue = name
