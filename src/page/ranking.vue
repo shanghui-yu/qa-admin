@@ -203,11 +203,6 @@ export default {
     picting (data) {
       if (data && data.length) {
         data = data.filter(item => item.phone)
-        // data.forEach((element,index) => {
-        //   if(!element.phone){
-        //     data.splice(index,1)
-        //   }
-        // })
       }
       return data
     },

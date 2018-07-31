@@ -7,6 +7,7 @@ import Redirect from '@/page/Redirect'
 import Home from '@/page/Home'
 import UserScatter from '@/page/userScatter'
 import Ranking from '@/page/ranking'
+import allRank from '@/page/allRank'
 Vue.use(Router)
 export default new Router({
   routes: [
@@ -34,6 +35,11 @@ export default new Router({
       path: '/Ranking',
       name: 'Ranking',
       component: Ranking
+    },
+    {
+      path: '/allRank',
+      name: 'allRank',
+      component: allRank
     }
   ].filter(route => route)
 })
